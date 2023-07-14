@@ -6,7 +6,6 @@ import android.graphics.drawable.GradientDrawable.Orientation
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
-import android.widget.Toast
 import androidx.core.content.ContextCompat
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.data.Entry
@@ -19,8 +18,9 @@ class MainActivity : AppCompatActivity() {
     private lateinit var lineChart: LineChart
     private lateinit var btnAdd: Button
     private var entries = ArrayList<Entry>()
+    private var entries2 = ArrayList<Entry>()
+    private var entries3 = ArrayList<Entry>()
     private lateinit var lineData: LineData
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,80 +33,71 @@ class MainActivity : AppCompatActivity() {
             addItem()
         }
 
-        lineChart.setTouchEnabled(true)
-        lineChart.setPinchZoom(true)
+        lineChart.apply {
+            setTouchEnabled(true)
+            setPinchZoom(true)
+            axisLeft.isEnabled = false
+            axisRight.isEnabled = false
+            xAxis.isEnabled = false
+            legend.isEnabled = false
+            description.isEnabled = false
+        }
 
-        entries.add(Entry(0f, 0f))
-        entries.add(Entry(1f, 4f))
-        entries.add(Entry(2f, 4f))
-        entries.add(Entry(3f, 4f))
-        entries.add(Entry(4f, 4f))
-        entries.add(Entry(5f, 14f))
-        generateRandomEntries(10)
-
+        entries.apply {
+            add(Entry(0f, 0f))
+            add(Entry(1f, 4f))
+            add(Entry(2f, 4f))
+            add(Entry(3f, 4f))
+            add(Entry(4f, 4f))
+            add(Entry(5f, 14f))
+        }
 
         val dataSet = LineDataSet(entries, "Cubic Line")
-        val markerView = CustomMarkerView(this, R.layout.custom_marker_view)
+        val markerView = CustomMarkerView(this, R.layout.custom_marker_view, entries)
         lineChart.marker = markerView
-        dataSet.mode = LineDataSet.Mode.CUBIC_BEZIER
-        dataSet.cubicIntensity = 0.2f
-        dataSet.setDrawFilled(true)
-        dataSet.setDrawCircles(false)
-        dataSet.lineWidth = 1.8f
-        dataSet.circleRadius = 30f
-        dataSet.valueTextColor = Color.TRANSPARENT
-        dataSet.highLightColor = Color.TRANSPARENT
-        dataSet.color = ContextCompat.getColor(this, R.color.my_color_04A0FE)
+        dataSet.apply {
+            mode = LineDataSet.Mode.HORIZONTAL_BEZIER
+            setDrawFilled(false)
+            setDrawCircles(false)
+            lineWidth = 1.8f
+            valueTextColor = Color.TRANSPARENT
+            highLightColor = Color.TRANSPARENT
+            color = ContextCompat.getColor(this@MainActivity, R.color.my_color_04A0FE)
+            fillDrawable = GradientDrawable(
+                GradientDrawable.Orientation.TOP_BOTTOM,
+                intArrayOf(
+                    ContextCompat.getColor(this@MainActivity, R.color.my_color),
+                    ContextCompat.getColor(this@MainActivity, R.color.my_color_0)
+                )
+            ).apply {
+                gradientType = GradientDrawable.LINEAR_GRADIENT
+            }
+        }
 
-        val colors = intArrayOf(
-            ContextCompat.getColor(this, R.color.my_color),
-            ContextCompat.getColor(this, R.color.my_color_0)
-        )
-        val gradientDrawable = GradientDrawable(Orientation.TOP_BOTTOM, colors)
-        gradientDrawable.gradientType = GradientDrawable.LINEAR_GRADIENT
-        dataSet.fillDrawable = gradientDrawable
-
-        val dataSets = ArrayList<ILineDataSet>()
-        dataSets.add(dataSet)
-
-        lineData = LineData(dataSets)
+        lineData = LineData(dataSet)
         lineChart.data = lineData
         lineChart.invalidate()
-
-        lineChart.axisLeft.isEnabled = false
-        lineChart.axisRight.isEnabled = false
-        lineChart.xAxis.isEnabled = false
-        lineChart.legend.isEnabled = false
-        lineChart.description.isEnabled = false
-    }
-
-
-    private fun generateRandomEntries(count: Int) {
-        val random = Random()
-        for (i in 6 until count) {
-            val x = i.toFloat()
-            val y = 3f + (random.nextFloat() * (4f - 3f)) // Generate random y value between 3 and 4
-            entries.add(Entry(x, y))
-        }
     }
 
     private fun addItem() {
         val random = Random()
-        val x = entries.size
-        val y = 3f + (random.nextFloat() * (4f - 3f)) // Generate random y value between 3 and 4
-        entries.add(Entry(x.toFloat(), y))
+        val x = entries.size.toFloat()
+        val y =
+            3f + (random.nextFloat() * (400000f - 3f)) // Generate random y value between 3 and 400000
+        entries.add(Entry(x, y))
+        entries2.add(Entry(x, y + 2))
+        entries3.add(Entry(x, y - 2))
 
-        // Update the LineDataSet with the new data points
-        val dataSet = LineDataSet(entries, "Cubic Line")
-        dataSet.mode = LineDataSet.Mode.CUBIC_BEZIER
-        dataSet.cubicIntensity = 0.2f
-        dataSet.setDrawFilled(true)
-        dataSet.setDrawCircles(false)
-        dataSet.lineWidth = 1.8f
-        dataSet.circleRadius = 30f
-        dataSet.valueTextColor = Color.TRANSPARENT
-        dataSet.highLightColor = Color.TRANSPARENT
-        dataSet.color = ContextCompat.getColor(this, R.color.my_color_04A0FE)
+        val lastEntries = entries.takeLast(10)
+        val lastEntries2 = entries2.takeLast(10)
+        val lastEntries3 = entries3.takeLast(10)
+
+        val dataSet = LineDataSet(lastEntries, "Cubic Line")
+        val dataSet2 = LineDataSet(lastEntries2, "Second Line")
+        val dataSet3 = LineDataSet(lastEntries3, "Third Line")
+
+        val markerView = CustomMarkerView(this, R.layout.custom_marker_view, entries)
+        lineChart.marker = markerView
 
         val colors = intArrayOf(
             ContextCompat.getColor(this, R.color.my_color),
@@ -114,19 +105,51 @@ class MainActivity : AppCompatActivity() {
         )
         val gradientDrawable = GradientDrawable(Orientation.TOP_BOTTOM, colors)
         gradientDrawable.gradientType = GradientDrawable.LINEAR_GRADIENT
-        dataSet.fillDrawable = gradientDrawable
 
-        // Recreate the LineData object with the updated LineDataSet
+        dataSet.apply {
+            mode = LineDataSet.Mode.HORIZONTAL_BEZIER
+            setDrawFilled(false)
+            setDrawCircles(false)
+            lineWidth = 1.8f
+            circleRadius = 30f
+            valueTextColor = Color.TRANSPARENT
+            highLightColor = Color.TRANSPARENT
+            color = ContextCompat.getColor(this@MainActivity, R.color.my_color_04A0FE)
+            fillDrawable = gradientDrawable
+        }
+
+        dataSet2.apply {
+            mode = LineDataSet.Mode.HORIZONTAL_BEZIER
+            setDrawFilled(false)
+            setDrawCircles(false)
+            lineWidth = 1.8f
+            circleRadius = 30f
+            valueTextColor = Color.TRANSPARENT
+            highLightColor = Color.TRANSPARENT
+            color = ContextCompat.getColor(this@MainActivity, R.color.my_color_04A0FE)
+            fillDrawable = gradientDrawable
+        }
+
+        dataSet3.apply {
+            mode = LineDataSet.Mode.HORIZONTAL_BEZIER
+            setDrawFilled(false)
+            setDrawCircles(false)
+            lineWidth = 1.8f
+            circleRadius = 30f
+            valueTextColor = Color.TRANSPARENT
+            highLightColor = Color.TRANSPARENT
+            color = ContextCompat.getColor(this@MainActivity, R.color.my_color_04A0FE)
+            fillDrawable = gradientDrawable
+        }
+
         val dataSets = ArrayList<ILineDataSet>()
         dataSets.add(dataSet)
-        lineData = LineData(dataSets)
+        dataSets.add(dataSet2)
+        dataSets.add(dataSet3)
 
-        // Set the new LineData to the lineChart and redraw it
+        lineData = LineData(dataSets)
         lineChart.data = lineData
         lineChart.notifyDataSetChanged()
         lineChart.invalidate()
     }
-
-
-
 }
