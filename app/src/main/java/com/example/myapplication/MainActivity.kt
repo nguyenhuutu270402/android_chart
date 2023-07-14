@@ -42,10 +42,12 @@ class MainActivity : AppCompatActivity() {
         entries.add(Entry(3f, 4f))
         entries.add(Entry(4f, 4f))
         entries.add(Entry(5f, 14f))
-        generateRandomEntries(100)
+        generateRandomEntries(10)
 
 
         val dataSet = LineDataSet(entries, "Cubic Line")
+        val markerView = CustomMarkerView(this, R.layout.custom_marker_view)
+        lineChart.marker = markerView
         dataSet.mode = LineDataSet.Mode.CUBIC_BEZIER
         dataSet.cubicIntensity = 0.2f
         dataSet.setDrawFilled(true)
