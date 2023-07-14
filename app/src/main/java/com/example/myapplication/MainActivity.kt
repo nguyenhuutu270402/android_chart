@@ -52,32 +52,84 @@ class MainActivity : AppCompatActivity() {
             add(Entry(5f, 14f))
         }
 
+        entries2.apply {
+            add(Entry(0f, 0f))
+            add(Entry(1f, 6f))
+            add(Entry(2f, 8f))
+            add(Entry(3f, 10f))
+            add(Entry(4f, 12f))
+            add(Entry(5f, 16f))
+        }
+
+        entries3.apply {
+            add(Entry(0f, 0f))
+            add(Entry(1f, 5f))
+            add(Entry(2f, 7f))
+            add(Entry(3f, 9f))
+            add(Entry(4f, 11f))
+            add(Entry(5f, 15f))
+        }
+
         val dataSet = LineDataSet(entries, "Cubic Line")
+        val dataSet2 = LineDataSet(entries2, "Second Line")
+        val dataSet3 = LineDataSet(entries3, "Third Line")
+
         val markerView = CustomMarkerView(this, R.layout.custom_marker_view, entries)
         lineChart.marker = markerView
+
+        val colors = intArrayOf(
+            ContextCompat.getColor(this, R.color.my_color),
+            ContextCompat.getColor(this, R.color.my_color_0)
+        )
+        val gradientDrawable = GradientDrawable(Orientation.TOP_BOTTOM, colors)
+        gradientDrawable.gradientType = GradientDrawable.LINEAR_GRADIENT
+
         dataSet.apply {
             mode = LineDataSet.Mode.HORIZONTAL_BEZIER
             setDrawFilled(false)
             setDrawCircles(false)
             lineWidth = 1.8f
+            circleRadius = 30f
             valueTextColor = Color.TRANSPARENT
             highLightColor = Color.TRANSPARENT
             color = ContextCompat.getColor(this@MainActivity, R.color.my_color_04A0FE)
-            fillDrawable = GradientDrawable(
-                GradientDrawable.Orientation.TOP_BOTTOM,
-                intArrayOf(
-                    ContextCompat.getColor(this@MainActivity, R.color.my_color),
-                    ContextCompat.getColor(this@MainActivity, R.color.my_color_0)
-                )
-            ).apply {
-                gradientType = GradientDrawable.LINEAR_GRADIENT
-            }
+            fillDrawable = gradientDrawable
         }
 
-        lineData = LineData(dataSet)
+        dataSet2.apply {
+            mode = LineDataSet.Mode.HORIZONTAL_BEZIER
+            setDrawFilled(false)
+            setDrawCircles(false)
+            lineWidth = 1.8f
+            circleRadius = 30f
+            valueTextColor = Color.TRANSPARENT
+            highLightColor = Color.TRANSPARENT
+            color = ContextCompat.getColor(this@MainActivity, R.color.purple_200)
+            fillDrawable = gradientDrawable
+        }
+
+        dataSet3.apply {
+            mode = LineDataSet.Mode.HORIZONTAL_BEZIER
+            setDrawFilled(false)
+            setDrawCircles(false)
+            lineWidth = 1.8f
+            circleRadius = 30f
+            valueTextColor = Color.TRANSPARENT
+            highLightColor = Color.TRANSPARENT
+            color = ContextCompat.getColor(this@MainActivity, R.color.purple_500)
+            fillDrawable = gradientDrawable
+        }
+
+        val dataSets = ArrayList<ILineDataSet>()
+        dataSets.add(dataSet)
+        dataSets.add(dataSet2)
+        dataSets.add(dataSet3)
+
+        lineData = LineData(dataSets)
         lineChart.data = lineData
         lineChart.invalidate()
     }
+
 
     private fun addItem() {
         val random = Random()
@@ -126,7 +178,7 @@ class MainActivity : AppCompatActivity() {
             circleRadius = 30f
             valueTextColor = Color.TRANSPARENT
             highLightColor = Color.TRANSPARENT
-            color = ContextCompat.getColor(this@MainActivity, R.color.my_color_04A0FE)
+            color = ContextCompat.getColor(this@MainActivity, R.color.purple_200)
             fillDrawable = gradientDrawable
         }
 
@@ -138,7 +190,7 @@ class MainActivity : AppCompatActivity() {
             circleRadius = 30f
             valueTextColor = Color.TRANSPARENT
             highLightColor = Color.TRANSPARENT
-            color = ContextCompat.getColor(this@MainActivity, R.color.my_color_04A0FE)
+            color = ContextCompat.getColor(this@MainActivity, R.color.purple_500)
             fillDrawable = gradientDrawable
         }
 
