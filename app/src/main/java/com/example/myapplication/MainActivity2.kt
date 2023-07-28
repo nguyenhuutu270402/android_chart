@@ -87,3 +87,4 @@ class MainActivity2 : AppCompatActivity() {
         lineChart.invalidate()
     }
 }
+//
