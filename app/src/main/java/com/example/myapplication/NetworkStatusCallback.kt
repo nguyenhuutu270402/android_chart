@@ -6,7 +6,8 @@ import android.net.Network
 import android.net.NetworkCapabilities
 import android.os.Build
 
-class NetworkStatusCallback(private val context: Context) : ConnectivityManager.NetworkCallback() {
+class NetworkStatusCallback(private val context: Context, private val setText00: (String) -> Unit) : ConnectivityManager.NetworkCallback() {
+
     val networkStatusList = mutableListOf<String>()
 
     override fun onAvailable(network: Network) {
@@ -30,9 +31,12 @@ class NetworkStatusCallback(private val context: Context) : ConnectivityManager.
             if (capabilities != null) {
                 if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) {
                     networkStatusList.add("Wifi")
+                    println("network>>>>0: wifi")
                 }
                 if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)) {
                     networkStatusList.add("Mạng di động")
+                    println("network>>>>0: Mạng di động")
+
                 }
             }
         }
@@ -41,7 +45,7 @@ class NetworkStatusCallback(private val context: Context) : ConnectivityManager.
             networkStatusList.add("Không có kết nối mạng")
         }
 
-        println("network>>>>: $networkStatusList")
+        println("network>>>>>>>>>>>>>>: $networkStatusList")
 
     }
 }
